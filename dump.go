@@ -298,5 +298,13 @@ func (d *Dumper) SetLessLock(lesslock string) {
 // execute dump
 func (d *Dumper) Dump() error {
 
+	// define arg
+	args := make([]string, 0, 16)
+
+	cmd := exec.Command(d.ExecutionPath, args...)
+	err := cmd.Run()
+	if err != nil {
+		return errors.Trace(err)
+	}
 	return nil
 }

@@ -147,4 +147,142 @@ func (d *Dumper) SetCollation(collation string) {
 	d.Collation = collation
 }
 
-//
+// set statement size
+func (d *Dumper) SetStatementSize(statement_size uint64) {
+	d.StatementSize = statement_size
+}
+
+// set rows
+func (d *Dumper) SetRows(rows uint64) {
+	d.Rows = rows
+}
+
+// set chunk file size
+func (d *Dumper) SetChunkFielSize(size uint64) {
+	d.ChunkFilesize = size
+}
+
+// set enable/disable compress
+func (d *Dumper) SetCompress(enable uint64) {
+	d.Compress = enable
+}
+
+// set enable/disable daemon
+func (d *Dumper) SetDaemon(enable uint64) {
+	d.Daemon = enable
+}
+
+// set long query guard
+func (d *Dumper) SetLongQueryGuard(long_query_time uint64) {
+	d.LongQueryGuard = long_query_time
+}
+
+// set kill long query
+func (d *Dumper) SetKillLongQueries(kill uint64) {
+	d.KillLongQueries = kill
+}
+
+// set snapshot interval
+func (d *Dumper) SetSnapshotInterval(interval uint64) {
+	d.SnapshotInterval = interval
+}
+
+// set log file.
+func (d *Dumper) SetLogFile(logfile string) {
+	d.LogFile = logfile
+}
+
+// set UTC timezone
+func (d *Dumper) SetUTCTimeZone(timezone uint64) {
+	d.UtcTimeZone = timezone
+}
+
+// set skip timezone
+func (d *Dumper) SetSkipUTC(skip uint64) {
+	d.SkipUtcTimeZone = skip
+}
+
+// set save points
+func (d *Dumper) SetSavePoints(savepoints uint64) {
+	d.UseSavePoints = savepoints
+}
+
+// set Success on 1146
+func (d *Dumper) SetSuccess1146(success uint64) {
+	d.SuccessOn1146 = success
+}
+
+// set Lock all tables.
+func (d *Dumper) SetLockAllTables(locktables uint64) {
+	d.LockAllTables = locktables
+}
+
+// set update since
+func (d *Dumper) SetUpdateSince(update_since uint64) {
+	d.UpdatedSince = update_since
+}
+
+// set Trx consistency only
+func (d *Dumper) SetTrxConsistencyOnly(trx_consistency_only uint64) {
+	d.TrxConsistencyOnly = trx_consistency_only
+}
+
+// set Complete insert
+func (d *Dumper) SetCompleteInsert(complete_insert uint64) {
+	d.TrxConsistencyOnly = complete_insert
+}
+
+// set threads
+func (d *Dumper) SetThreads(threads uint64) {
+	d.Threads = threads
+}
+
+// set compress protocol
+func (d *Dumper) SetCompressProtocol(compress_protocol uint64) {
+	d.CompressProtocol = compress_protocol
+}
+
+// set export schema
+func (d *Dumper) SetExportSchema(export uint64) {
+	d.ExportSchemas = export
+}
+
+// set export datas
+func (d *Dumper) SetExportDatas(export uint64) {
+	d.ExportDatas = export
+}
+
+// set export triggers
+func (d *Dumper) SetExportTrigger(export uint64) {
+	d.ExportTriggers = export
+}
+
+// set export events
+func (d *Dumper) SetExportEvents(export uint64) {
+	d.ExportEvents = export
+}
+
+// set export Routines
+func (d *Dumper) SetExportRoutines(export uint64) {
+	d.ExportRoutines = export
+}
+
+// set export Views
+func (d *Dumper) SetExportViews(export uint64) {
+	d.ExportViews = export
+}
+
+// set nolock
+func (d *Dumper) SetNoLock(nolock uint64) {
+	d.NoLock = nolock
+}
+
+// set no backup lock.
+func (d *Dumper) SetNoBasckupLock(nobackuplock uint64) {
+	d.NoBackupLock = nobackuplock
+}
+
+// set no less lock
+func (d *Dumper) SetLessLock(lesslock uint64) {
+	d.LessLock = lesslock
+}

@@ -410,6 +410,7 @@ func (d *Dumper) Dump() error {
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(fmt.Sprint(err) + " : " + stderr.String())
+		fmt.Println(cmd.Args)
 		return errors.Trace(err)
 	}
 	fmt.Println("Result:" + out.String())

@@ -1,9 +1,9 @@
 package mydumper
 
 import (
+	"fmt"
 	"os/exec"
 	"runtime"
-	"strconv"
 
 	"github.com/juju/errors"
 )
@@ -15,7 +15,7 @@ type (
 
 		// mysql database information.
 		Addr     string `json:"addr" db:"addr"`
-		Port     string `json:"port" db:"port"`
+		Port     uint64 `json:"port" db:"port"`
 		User     string `json:"username" db:"username"`
 		Password string `json:"password" db:"password"`
 		// character default utf8,collation default is utf8_general_ci.
@@ -29,65 +29,65 @@ type (
 
 		OutPutDir string `json:"output_dir" db:"output_dir"`
 		// Attempted size of INSERT statement in bytes.default  1000000
-		StatementSize string `json:"statement_size" db:"statement_size"`
+		StatementSize uint64 `json:"statement_size" db:"statement_size"`
 		// Try to split tables into chunks of this many rows.
-		Rows string `json:"rows" db:"rows"`
+		Rows uint64 `json:"rows" db:"rows"`
 		// Split tables into chunks of this output file size. unit is MB.
-		ChunkFilesize string `json:"chunk_filesize" db:"chunk_filesize"`
+		ChunkFilesize uint64 `json:"chunk_filesize" db:"chunk_filesize"`
 		// compress output files. default disable
-		Compress string `json:"compress" db:"compress"`
+		Compress bool `json:"compress" db:"compress"`
 		// enable daemon mode.
-		Daemon string `json:"daemon" db:"daemon"`
+		Daemon bool `json:"daemon" db:"daemon"`
 		// Set long query timer in seconds. default 60
-		LongQueryGuard string `json:"long_query_guard" db:"long_query_guard"`
+		LongQueryGuard uint64 `json:"long_query_guard" db:"long_query_guard"`
 		// kill long running queries.
-		KillLongQueries string `json:"kill_long_queries" db:"kill_long_queries"`
+		KillLongQueries bool `json:"kill_long_queries" db:"kill_long_queries"`
 		// Interval between each dump snapshot( in minutes).requires --daemon,default 60
-		SnapshotInterval string `json:"snapshot_interval" db:"snapshot_interval"`
+		SnapshotInterval uint64 `json:"snapshot_interval" db:"snapshot_interval"`
 		// print messages to logfile.
 		LogFile string `json:"log_file" db:"log_file"`
 		// SET TIME_ZONE='+00:00'
-		UtcTimeZone string `json:"utc_timezone" db:"utc_timezone"`
+		UtcTimeZone bool `json:"utc_timezone" db:"utc_timezone"`
 		// Disable SET TIME_ZONE statement.
-		SkipUtcTimeZone string `json:"skip_utc_tz" db:"skip_utc_tz"`
+		SkipUtcTimeZone bool `json:"skip_utc_tz" db:"skip_utc_tz"`
 		// Use savepoints to reduce metadata locking issues. needs SUPER privileges.
-		UseSavePoints string `json:"use_savepoints" db:"use_savepoints"`
+		UseSavePoints bool `json:"use_savepoints" db:"use_savepoints"`
 		// Not increment error count and waring instead of critical in case of table doesn't exist.
-		SuccessOn1146 string `json:"success_on_1146" db:"success_on_1146"`
+		SuccessOn1146 bool `json:"success_on_1146" db:"success_on_1146"`
 		// use lock table for all.
-		LockAllTables string `json:"lock_all_tables" db:"lock_all_tables"`
+		LockAllTables bool `json:"lock_all_tables" db:"lock_all_tables"`
 		// Use Update_time to dump only tables updated in the last n days.
-		UpdatedSince string `json:"update_since" db:"update_since"`
+		UpdatedSince bool `json:"update_since" db:"update_since"`
 		// Transactional consistency only.
-		TrxConsistencyOnly string `json:"trx_consistency_only" db:"trx_consistency_only"`
+		TrxConsistencyOnly bool `json:"trx_consistency_only" db:"trx_consistency_only"`
 		// Use complete INSERT statements that include column names.
-		CompleteInsert string `json:"complete_insert" db:"complete_insert"`
+		CompleteInsert bool `json:"complete_insert" db:"complete_insert"`
 		// number of threads,default 4
-		Threads string `json:"threads" db:"threads"`
+		Threads uint64 `json:"threads" db:"threads"`
 		// Use compress on the mysql connection.
-		CompressProtocol string `json:"compress_protocol" db:"compress_protocol"`
+		CompressProtocol bool `json:"compress_protocol" db:"compress_protocol"`
 
 		// dump table schemas with the data
-		ExportSchemas string `json:"export_schemas" db:"export_schemas"`
+		ExportSchemas bool `json:"export_schemas" db:"export_schemas"`
 		// dump table data
-		ExportDatas string `json:"export_datas" db:"export_datas"`
+		ExportDatas bool `json:"export_datas" db:"export_datas"`
 		// dump trigger
-		ExportTriggers string `json:"export_triggers" db:"export_triggers"`
+		ExportTriggers bool `json:"export_triggers" db:"export_triggers"`
 		// dump events
-		ExportEvents string `json:"export_events" db:"export_events"`
+		ExportEvents bool `json:"export_events" db:"export_events"`
 		// dump routines
-		ExportRoutines string `json:"export_routines" db:"export_routines"`
+		ExportRoutines bool `json:"export_routines" db:"export_routines"`
 		// dump views
-		ExportViews string `json:"export_views" db:"export_views"`
+		ExportViews bool `json:"export_views" db:"export_views"`
 
-		NoLock       string `json:"no_lock" db:"no_lock"`
-		NoBackupLock string `json:"no_backup_lock" db:"no_backup_lock"`
-		LessLock     string `json:"less_locking" db:"less_locking"`
+		NoLock       bool `json:"no_lock" db:"no_lock"`
+		NoBackupLock bool `json:"no_backup_lock" db:"no_backup_lock"`
+		LessLock     bool `json:"less_locking" db:"less_locking"`
 	}
 )
 
 // new dumper handler.
-func NewDumper(execution_path string, addr string, port string, user string, password string) (*Dumper, error) {
+func NewDumper(execution_path string, addr string, port uint64, user string, password string) (*Dumper, error) {
 	if len(execution_path) == 0 {
 		return nil, errors.NotFoundf("%s Not Exists\n", execution_path)
 	}
@@ -106,36 +106,36 @@ func NewDumper(execution_path string, addr string, port string, user string, pas
 
 	d.OutPutDir = "/backup"
 
-	d.StatementSize = "1000000"
-	d.Rows = "0"
-	d.ChunkFilesize = "0"
-	d.Compress = "0"
-	d.Daemon = "0"
-	d.LongQueryGuard = "600"
-	d.KillLongQueries = "0"
-	d.SnapshotInterval = "60"
+	d.StatementSize = 1000000
+	d.Rows = 1000000
+	d.ChunkFilesize = 64
+	d.Compress = true
+	d.Daemon = false
+	d.LongQueryGuard = 600
+	d.KillLongQueries = false
+	d.SnapshotInterval = 60
 	d.LogFile = "/backup/backup.log"
-	d.UtcTimeZone = "0"
-	d.SkipUtcTimeZone = "0"
-	d.UseSavePoints = "0"
-	d.SuccessOn1146 = "0"
-	d.LockAllTables = "0"
-	d.UpdatedSince = "0"
-	d.TrxConsistencyOnly = "1"
-	d.CompleteInsert = "1"
-	d.Threads = strconv.Itoa(runtime.NumCPU())
-	d.CompressProtocol = "0"
+	d.UtcTimeZone = false
+	d.SkipUtcTimeZone = true
+	d.UseSavePoints = false
+	d.SuccessOn1146 = false
+	d.LockAllTables = false
+	d.UpdatedSince = false
+	d.TrxConsistencyOnly = true
+	d.CompleteInsert = true
+	d.Threads = uint64(runtime.NumCPU())
+	d.CompressProtocol = false
 
-	d.ExportSchemas = "1"
-	d.ExportDatas = "1"
-	d.ExportTriggers = "1"
-	d.ExportEvents = "1"
-	d.ExportRoutines = "1"
-	d.ExportViews = "1"
+	d.ExportSchemas = true
+	d.ExportDatas = true
+	d.ExportTriggers = true
+	d.ExportEvents = true
+	d.ExportRoutines = true
+	d.ExportViews = true
 
-	d.NoLock = "0"
-	d.NoBackupLock = "0"
-	d.LessLock = "0"
+	d.NoLock = false
+	d.NoBackupLock = false
+	d.LessLock = false
 
 	return d, nil
 }
@@ -156,42 +156,42 @@ func (d *Dumper) SetCollation(collation string) {
 }
 
 // set statement size
-func (d *Dumper) SetStatementSize(statement_size string) {
+func (d *Dumper) SetStatementSize(statement_size uint64) {
 	d.StatementSize = statement_size
 }
 
 // set rows
-func (d *Dumper) SetRows(rows string) {
+func (d *Dumper) SetRows(rows uint64) {
 	d.Rows = rows
 }
 
 // set chunk file size
-func (d *Dumper) SetChunkFielSize(size string) {
+func (d *Dumper) SetChunkFielSize(size uint64) {
 	d.ChunkFilesize = size
 }
 
 // set enable/disable compress
-func (d *Dumper) SetCompress(enable string) {
+func (d *Dumper) SetCompress(enable bool) {
 	d.Compress = enable
 }
 
 // set enable/disable daemon
-func (d *Dumper) SetDaemon(enable string) {
+func (d *Dumper) SetDaemon(enable bool) {
 	d.Daemon = enable
 }
 
 // set long query guard
-func (d *Dumper) SetLongQueryGuard(long_query_time string) {
+func (d *Dumper) SetLongQueryGuard(long_query_time uint64) {
 	d.LongQueryGuard = long_query_time
 }
 
 // set kill long query
-func (d *Dumper) SetKillLongQueries(kill string) {
+func (d *Dumper) SetKillLongQueries(kill bool) {
 	d.KillLongQueries = kill
 }
 
 // set snapshot interval
-func (d *Dumper) SetSnapshotInterval(interval string) {
+func (d *Dumper) SetSnapshotInterval(interval uint64) {
 	d.SnapshotInterval = interval
 }
 
@@ -201,97 +201,97 @@ func (d *Dumper) SetLogFile(logfile string) {
 }
 
 // set UTC timezone
-func (d *Dumper) SetUTCTimeZone(timezone string) {
+func (d *Dumper) SetUTCTimeZone(timezone bool) {
 	d.UtcTimeZone = timezone
 }
 
 // set skip timezone
-func (d *Dumper) SetSkipUTC(skip string) {
+func (d *Dumper) SetSkipUTC(skip bool) {
 	d.SkipUtcTimeZone = skip
 }
 
 // set save points
-func (d *Dumper) SetSavePoints(savepoints string) {
+func (d *Dumper) SetSavePoints(savepoints bool) {
 	d.UseSavePoints = savepoints
 }
 
 // set Success on 1146
-func (d *Dumper) SetSuccess1146(success string) {
+func (d *Dumper) SetSuccess1146(success bool) {
 	d.SuccessOn1146 = success
 }
 
 // set Lock all tables.
-func (d *Dumper) SetLockAllTables(locktables string) {
+func (d *Dumper) SetLockAllTables(locktables bool) {
 	d.LockAllTables = locktables
 }
 
 // set update since
-func (d *Dumper) SetUpdateSince(update_since string) {
+func (d *Dumper) SetUpdateSince(update_since bool) {
 	d.UpdatedSince = update_since
 }
 
 // set Trx consistency only
-func (d *Dumper) SetTrxConsistencyOnly(trx_consistency_only string) {
+func (d *Dumper) SetTrxConsistencyOnly(trx_consistency_only bool) {
 	d.TrxConsistencyOnly = trx_consistency_only
 }
 
 // set Complete insert
-func (d *Dumper) SetCompleteInsert(complete_insert string) {
+func (d *Dumper) SetCompleteInsert(complete_insert bool) {
 	d.TrxConsistencyOnly = complete_insert
 }
 
 // set threads
-func (d *Dumper) SetThreads(threads string) {
+func (d *Dumper) SetThreads(threads uint64) {
 	d.Threads = threads
 }
 
 // set compress protocol
-func (d *Dumper) SetCompressProtocol(compress_protocol string) {
+func (d *Dumper) SetCompressProtocol(compress_protocol bool) {
 	d.CompressProtocol = compress_protocol
 }
 
 // set export schema
-func (d *Dumper) SetExportSchema(export string) {
+func (d *Dumper) SetExportSchema(export bool) {
 	d.ExportSchemas = export
 }
 
 // set export datas
-func (d *Dumper) SetExportDatas(export string) {
+func (d *Dumper) SetExportDatas(export bool) {
 	d.ExportDatas = export
 }
 
 // set export triggers
-func (d *Dumper) SetExportTrigger(export string) {
+func (d *Dumper) SetExportTrigger(export bool) {
 	d.ExportTriggers = export
 }
 
 // set export events
-func (d *Dumper) SetExportEvents(export string) {
+func (d *Dumper) SetExportEvents(export bool) {
 	d.ExportEvents = export
 }
 
 // set export Routines
-func (d *Dumper) SetExportRoutines(export string) {
+func (d *Dumper) SetExportRoutines(export bool) {
 	d.ExportRoutines = export
 }
 
 // set export Views
-func (d *Dumper) SetExportViews(export string) {
+func (d *Dumper) SetExportViews(export bool) {
 	d.ExportViews = export
 }
 
 // set nolock
-func (d *Dumper) SetNoLock(nolock string) {
+func (d *Dumper) SetNoLock(nolock bool) {
 	d.NoLock = nolock
 }
 
 // set no backup lock.
-func (d *Dumper) SetNoBasckupLock(nobackuplock string) {
+func (d *Dumper) SetNoBasckupLock(nobackuplock bool) {
 	d.NoBackupLock = nobackuplock
 }
 
 // set no less lock
-func (d *Dumper) SetLessLock(lesslock string) {
+func (d *Dumper) SetLessLock(lesslock bool) {
 	d.LessLock = lesslock
 }
 
@@ -299,7 +299,12 @@ func (d *Dumper) SetLessLock(lesslock string) {
 func (d *Dumper) Dump() error {
 
 	// define arg
-	args := make([]string, 0, 16)
+	args := make([]string, 0, 30)
+
+	args = append(args, fmt.Sprintf("--host=%s", d.Addr))
+	args = append(args, fmt.Sprintf("--port=%d", d.Port))
+	args = append(args, fmt.Sprintf("--user=%s", d.User))
+	args = append(args, fmt.Sprintf("--password=%s", d.Password))
 
 	cmd := exec.Command(d.ExecutionPath, args...)
 	err := cmd.Run()

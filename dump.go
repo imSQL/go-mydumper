@@ -305,7 +305,7 @@ func (d *Dumper) Dump() error {
 	// define arg
 	args := make([]string, 0, 31)
 
-	args = append(args, fmt.Sprintf("-h %s", d.Addr))
+	args = append(args, fmt.Sprintf("--host %s --port %d --user %s --password %s", d.Addr, d.Port, d.User, d.Password))
 	/*
 		args = append(args, fmt.Sprintf("--port %d", d.Port))
 		args = append(args, fmt.Sprintf("--user %s", d.User))

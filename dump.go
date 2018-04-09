@@ -303,7 +303,7 @@ func (d *Dumper) Dump() error {
 	var stderr bytes.Buffer
 
 	// define arg
-	args := make([]string, 0, 31)
+	//args := make([]string, 0, 31)
 
 	/*
 		args = append(args, fmt.Sprintf("--host 172.18.10.136 --port 3309 --user root --password 111111"))
@@ -405,7 +405,7 @@ func (d *Dumper) Dump() error {
 		}
 
 	*/
-	cmd := exec.Command(d.ExecutionPath, args...)
+	cmd := exec.Command(d.ExecutionPath, "--host 172.18.10.136", "--port 3309", "--user root", "--password 111111")
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err := cmd.Run()

@@ -1,6 +1,7 @@
 package mydumper
 
 import (
+	"bytes"
 	"fmt"
 	"os/exec"
 	"runtime"
@@ -299,8 +300,11 @@ func (d *Dumper) SetLessLock(lesslock bool) {
 // execute dump
 func (d *Dumper) Dump() error {
 
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+
 	// define arg
-	args := make([]string, 0, 30)
+	args := make([]string, 0, 31)
 
 	args = append(args, fmt.Sprintf("--host %s", d.Addr))
 	args = append(args, fmt.Sprintf("--port %d", d.Port))
@@ -401,9 +405,13 @@ func (d *Dumper) Dump() error {
 	}
 
 	cmd := exec.Command(d.ExecutionPath, args...)
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
+		fmt.Println(fmt.Sprint(err) + " : " + stderr.String())
 		return errors.Trace(err)
 	}
+	fmt.Println("Result:" + out.String())
 	return nil
 }

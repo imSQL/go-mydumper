@@ -305,8 +305,8 @@ func (d *Dumper) Dump() error {
 	// define arg
 	args := make([]string, 0, 31)
 
-	args = append(args, fmt.Sprintf("--host 172.18.10.136 --port 3309 --user root --password 111111"))
 	/*
+		args = append(args, fmt.Sprintf("--host 172.18.10.136 --port 3309 --user root --password 111111"))
 		args = append(args, fmt.Sprintf("--port %d", d.Port))
 		args = append(args, fmt.Sprintf("--user %s", d.User))
 		args = append(args, fmt.Sprintf("--password %s", d.Password))
@@ -411,7 +411,7 @@ func (d *Dumper) Dump() error {
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(fmt.Sprint(err) + " : " + stderr.String())
-		fmt.Println(cmd.Args)
+		fmt.Println(cmd)
 		return errors.Trace(err)
 	}
 	fmt.Println("Result:" + out.String())

@@ -405,7 +405,7 @@ func (d *Dumper) Dump() error {
 		}
 
 	*/
-	cmd := exec.Command(d.ExecutionPath, "--host 172.18.10.136", "--port 3309", "--user root", "--password 111111")
+	cmd := exec.Command("mydumper", "--host 172.18.10.136", "--port 3309", "--user root", "--password 111111")
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err := cmd.Run()

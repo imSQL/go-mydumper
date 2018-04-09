@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 	"runtime"
+	"strings"
 
 	"github.com/juju/errors"
 )
@@ -303,117 +304,124 @@ func (d *Dumper) Dump() error {
 	var stderr bytes.Buffer
 
 	// define arg
-	//args := make([]string, 0, 31)
+	args := make([]string, 0, 61)
 
-	/*
-		args = append(args, fmt.Sprintf("--host 172.18.10.136 --port 3309 --user root --password 111111"))
-		args = append(args, fmt.Sprintf("--port %d", d.Port))
-		args = append(args, fmt.Sprintf("--user %s", d.User))
-		args = append(args, fmt.Sprintf("--password %s", d.Password))
+	args = append(args, fmt.Sprintf("--host"))
+	args = append(args, fmt.Sprintf("%s", d.Addr))
+	args = append(args, fmt.Sprintf("--port"))
+	args = append(args, fmt.Sprintf("%d", d.Port))
+	args = append(args, fmt.Sprintf("--user"))
+	args = append(args, fmt.Sprintf("%s", d.User))
+	args = append(args, fmt.Sprintf("--password"))
+	args = append(args, fmt.Sprintf("%s", d.Password))
 
-		if len(d.OutPutDir) > 0 {
-			args = append(args, fmt.Sprintf("--outputdir %s", d.OutPutDir))
-		} else {
-			return errors.NotFoundf("%s", d.OutPutDir)
+	if len(d.OutPutDir) > 0 {
+		args = append(args, fmt.Sprintf("--outputdir"))
+		args = append(args, fmt.Sprintf("%s", d.OutPutDir))
+	} else {
+		return errors.NotFoundf("%s", d.OutPutDir)
+	}
+
+	if len(d.LogFile) > 0 {
+		if strings.Compare(d.LogFile, "stdout") != 0 {
+			args = append(args, fmt.Sprintf("--logfile"))
+			args = append(args, fmt.Sprintf("%s", d.LogFile))
 		}
+	}
 
-		if len(d.LogFile) > 0 {
-			if strings.Compare(d.LogFile, "stdout") != 0 {
-				args = append(args, fmt.Sprintf("--logfile %s", d.LogFile))
-			}
-		}
+	args = append(args, fmt.Sprintf("--statement-size"))
+	args = append(args, fmt.Sprintf("%d", d.StatementSize))
+	args = append(args, fmt.Sprintf("--rows"))
+	args = append(args, fmt.Sprintf("%d", d.Rows))
+	args = append(args, fmt.Sprintf("--chunk-filesize"))
+	args = append(args, fmt.Sprintf("%d", d.ChunkFilesize))
 
-		args = append(args, fmt.Sprintf("--statement-size %d", d.StatementSize))
-		args = append(args, fmt.Sprintf("--rows %d", d.Rows))
-		args = append(args, fmt.Sprintf("--chunk-filesize %d", d.ChunkFilesize))
+	if d.Compress {
+		args = append(args, fmt.Sprintf("--compress"))
+	}
 
-		if d.Compress {
-			args = append(args, fmt.Sprintf("--compress"))
-		}
+	if d.Daemon {
+		args = append(args, fmt.Sprintf("--daemon"))
+	}
 
-		if d.Daemon {
-			args = append(args, fmt.Sprintf("--daemon"))
-		}
+	args = append(args, fmt.Sprintf("--long-query-guard"))
+	args = append(args, fmt.Sprintf("%d", d.LongQueryGuard))
+	if d.KillLongQueries {
+		args = append(args, fmt.Sprintf("--kill-long-queries"))
+	}
 
-		args = append(args, fmt.Sprintf("--long-query-guard %d", d.LongQueryGuard))
-		if d.KillLongQueries {
-			args = append(args, fmt.Sprintf("--kill-long-queries"))
-		}
+	args = append(args, fmt.Sprintf("--snapshot-interval"))
+	args = append(args, fmt.Sprintf("%d", d.SnapshotInterval))
 
-		args = append(args, fmt.Sprintf("--snapshot-interval %d", d.SnapshotInterval))
+	if d.UtcTimeZone {
+		args = append(args, fmt.Sprintf("--tz-utc"))
+	}
 
-		if d.UtcTimeZone {
-			args = append(args, fmt.Sprintf("--tz-utc"))
-		}
+	if d.SkipUtcTimeZone {
+		args = append(args, fmt.Sprintf("--skip-tz-utc"))
+	}
 
-		if d.SkipUtcTimeZone {
-			args = append(args, fmt.Sprintf("--skip-tz-utc"))
-		}
+	if d.UseSavePoints {
+		args = append(args, fmt.Sprintf("--use-savepoints"))
+	}
 
-		if d.UseSavePoints {
-			args = append(args, fmt.Sprintf("--use-savepoints"))
-		}
+	if d.SuccessOn1146 {
+		args = append(args, fmt.Sprintf("--success-on-1146"))
+	}
 
-		if d.SuccessOn1146 {
-			args = append(args, fmt.Sprintf("--success-on-1146"))
-		}
+	if d.LockAllTables {
+		args = append(args, fmt.Sprintf("--lock-all-tables"))
+	}
 
-		if d.LockAllTables {
-			args = append(args, fmt.Sprintf("--lock-all-tables"))
-		}
+	if d.UpdatedSince {
+		args = append(args, fmt.Sprintf("--updated-since"))
+	}
 
-		if d.UpdatedSince {
-			args = append(args, fmt.Sprintf("--updated-since"))
-		}
+	if d.TrxConsistencyOnly {
+		args = append(args, fmt.Sprintf("--trx-consistency-only"))
+	}
 
-		if d.TrxConsistencyOnly {
-			args = append(args, fmt.Sprintf("--trx-consistency-only"))
-		}
+	if d.CompleteInsert {
+		args = append(args, fmt.Sprintf("--complete-insert"))
+	}
 
-		if d.CompleteInsert {
-			args = append(args, fmt.Sprintf("--complete-insert"))
-		}
+	args = append(args, fmt.Sprintf("--threads"))
+	args = append(args, fmt.Sprintf("%d", d.Threads))
 
-		args = append(args, fmt.Sprintf("--threads %d", d.Threads))
+	if d.CompressProtocol {
+		args = append(args, fmt.Sprintf("--compress-protocol"))
+	}
 
-		if d.CompressProtocol {
-			args = append(args, fmt.Sprintf("--compress-protocol"))
-		}
+	if !d.ExportSchemas {
+		args = append(args, fmt.Sprintf("--no-schemas"))
+	}
 
-		if !d.ExportSchemas {
-			args = append(args, fmt.Sprintf("--no-schemas"))
-		}
+	if !d.ExportDatas {
+		args = append(args, fmt.Sprintf("--no-data"))
+	}
 
-		if !d.ExportDatas {
-			args = append(args, fmt.Sprintf("--no-data"))
-		}
+	if d.ExportTriggers {
+		args = append(args, fmt.Sprintf("--triggers"))
+	}
 
-		if d.ExportTriggers {
-			args = append(args, fmt.Sprintf("--triggers"))
-		}
+	if d.ExportEvents {
+		args = append(args, fmt.Sprintf("--events"))
+	}
 
-		if d.ExportEvents {
-			args = append(args, fmt.Sprintf("--events"))
-		}
+	if d.ExportRoutines {
+		args = append(args, fmt.Sprintf("--routines"))
+	}
 
-		if d.ExportRoutines {
-			args = append(args, fmt.Sprintf("--routines"))
-		}
+	if !d.ExportViews {
+		args = append(args, fmt.Sprintf("--no-views"))
+	}
 
-		if !d.ExportViews {
-			args = append(args, fmt.Sprintf("--no-views"))
-		}
-
-	*/
-	cmd := exec.Command("mydumper", "--host", "172.18.10.136", "--port", "3309", "--user", "root", "--password", "111111")
+	cmd := exec.Command(d.ExecutionPath, args...)
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
-		fmt.Println(fmt.Sprint(err) + " : " + stderr.String())
-		fmt.Println(cmd)
 		return errors.Trace(err)
 	}
-	fmt.Println("Result:" + out.String())
 	return nil
 }

@@ -305,18 +305,18 @@ func (d *Dumper) Dump() error {
 	// define arg
 	args := make([]string, 0, 31)
 
-	args = append(args, fmt.Sprintf("--host %s", d.Addr))
-	args = append(args, fmt.Sprintf("--port %d", d.Port))
-	args = append(args, fmt.Sprintf("--user %s", d.User))
-	args = append(args, fmt.Sprintf("--password %s", d.Password))
-
-	if len(d.OutPutDir) > 0 {
-		args = append(args, fmt.Sprintf("--outputdir %s", d.OutPutDir))
-	} else {
-		return errors.NotFoundf("%s", d.OutPutDir)
-	}
-
 	/*
+		args = append(args, fmt.Sprintf("--host %s", d.Addr))
+		args = append(args, fmt.Sprintf("--port %d", d.Port))
+		args = append(args, fmt.Sprintf("--user %s", d.User))
+		args = append(args, fmt.Sprintf("--password %s", d.Password))
+
+		if len(d.OutPutDir) > 0 {
+			args = append(args, fmt.Sprintf("--outputdir %s", d.OutPutDir))
+		} else {
+			return errors.NotFoundf("%s", d.OutPutDir)
+		}
+
 		if len(d.LogFile) > 0 {
 			if strings.Compare(d.LogFile, "stdout") != 0 {
 				args = append(args, fmt.Sprintf("--logfile %s", d.LogFile))

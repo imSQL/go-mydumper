@@ -26,7 +26,6 @@ type (
 
 		// object list.
 		Databases []string `json:"databases" db:"databases"`
-		TableDB   string   `json:"table_database" db:"table_database"`
 		Tables    []string `json:"tables" db:"tables"`
 
 		OutPutDir string `json:"output_dir" db:"output_dir"`
@@ -85,6 +84,9 @@ type (
 		NoLock       bool `json:"no_lock" db:"no_lock"`
 		NoBackupLock bool `json:"no_backup_lock" db:"no_backup_lock"`
 		LessLock     bool `json:"less_locking" db:"less_locking"`
+
+		//Regular expression for 'db.table' matching
+		Regex string `json:"regex" db:"regex"`
 	}
 )
 
@@ -106,6 +108,8 @@ func NewDumper(execution_path string, addr string, port uint64, user string, pas
 	d.User = user
 	d.Password = password
 
+	d.Databases = make([]string, 0, 16)
+	d.Tables = make([]string, 0, 16)
 	d.OutPutDir = "/backup"
 
 	d.StatementSize = 1000000
@@ -139,7 +143,24 @@ func NewDumper(execution_path string, addr string, port uint64, user string, pas
 	d.NoBackupLock = false
 	d.LessLock = false
 
+	d.Regex = ""
+
 	return d, nil
+}
+
+// add databases to backup
+func (d *Dumper) AddDatabase(dbs ...string) {
+	d.Databases = append(d.Databases, dbs...)
+}
+
+// add tables to backup
+func (d *Dumper) AddTables(tables ...string) error {
+	if len(d.Databases) > 0 {
+		d.Tables = append(d.Tables, tables...)
+	} else {
+		return errors.NotValidf("No Database")
+	}
+	return nil
 }
 
 // set output dir.
@@ -297,6 +318,11 @@ func (d *Dumper) SetLessLock(lesslock bool) {
 	d.LessLock = lesslock
 }
 
+// set regex
+func (d *Dumper) SetRegex(regex string) {
+	d.Regex = regex
+}
+
 // execute dump
 func (d *Dumper) Dump() error {
 
@@ -314,6 +340,16 @@ func (d *Dumper) Dump() error {
 	args = append(args, fmt.Sprintf("%s", d.User))
 	args = append(args, fmt.Sprintf("--password"))
 	args = append(args, fmt.Sprintf("%s", d.Password))
+
+	if len(d.Databases) > 0 {
+		args = append(args, fmt.Sprintf("--database"))
+		args = append(args, fmt.Sprintf("%s", strings.Join(d.Databases, ",")))
+	}
+
+	if len(d.Tables) > 0 {
+		args = append(args, fmt.Sprintf("--tables-list"))
+		args = append(args, fmt.Sprintf("%s", strings.Join(d.Tables, ",")))
+	}
 
 	if len(d.OutPutDir) > 0 {
 		args = append(args, fmt.Sprintf("--outputdir"))
@@ -414,6 +450,11 @@ func (d *Dumper) Dump() error {
 
 	if !d.ExportViews {
 		args = append(args, fmt.Sprintf("--no-views"))
+	}
+
+	if len(d.Regex) > 0 {
+		args = append(args, fmt.Sprintf("--regex"))
+		args = append(args, fmt.Sprintf("'%s'", d.Regex))
 	}
 
 	cmd := exec.Command(d.ExecutionPath, args...)

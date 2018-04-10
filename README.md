@@ -8,21 +8,11 @@ a mydumper golang library.
 
 1. Go 1.9
 1. CentOS 7
-1. tidb enterprise tools
+1. mydumper
 
 ### Usage
 
-Download tidb enterprise tools.
-
-    # wget http://download.pingcap.org/tidb-enterprise-tools-latest-linux-amd64.tar.gz
-    # tar -zxvf tidb-enterprise-tools-latest-linux-amd64.tar.gz
-
-Move mydumper/loader command to /usr/bin directory.
-
-    # cp tidb-enterprise-tools-latest-linux-amd64/bin/* /usr/bin
-
-
-### Test
+Please install mydumper on your OS before backup.
 
 Execute backup.
 
@@ -46,6 +36,29 @@ Execute backup.
 		}
 	}
 
+Execute Restore
+
+	package main
+	
+	import (
+		"log"
+		mydumper "github.com/imSQL/go-mydumper"
+	)
+	
+	func main() {
+	
+		loader, err := mydumper.NewDumper("myloader", "172.18.10.136", 3309, "root", "111111")
+		if err != nil {
+			log.Println(err)
+		}
+
+        loader.SetRestoreDatabase("test")
+	
+		err = loader.Load()
+		if err != nil {
+			log.Println(err)
+		}
+	}
 
 ### Donate
 

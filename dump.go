@@ -143,7 +143,7 @@ func NewDumper(execution_path string, addr string, port uint64, user string, pas
 	d.NoBackupLock = false
 	d.LessLock = false
 
-	d.Regex = ""
+	d.Regex = "^(?!(sys))"
 
 	return d, nil
 }
@@ -454,7 +454,7 @@ func (d *Dumper) Dump() error {
 
 	if len(d.Regex) > 0 {
 		args = append(args, fmt.Sprintf("--regex"))
-		args = append(args, fmt.Sprintf("'%s'", d.Regex))
+		args = append(args, fmt.Sprintf("%s", d.Regex))
 	}
 
 	cmd := exec.Command(d.ExecutionPath, args...)

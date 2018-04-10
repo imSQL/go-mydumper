@@ -54,7 +54,7 @@ func TestDumpSomeTables(t *testing.T) {
 		t.Error(err)
 	}
 
-	dumper.AddDatabase("test")
+	dumper.AddDatabase("dev")
 	dumper.AddTables("t1", "t2", "t3")
 
 	err = dumper.Dump()

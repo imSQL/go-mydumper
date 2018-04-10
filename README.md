@@ -10,6 +10,10 @@ a mydumper golang library.
 1. CentOS 7
 1. mydumper
 
+### Install
+
+    # go get -u github.com/imSQL/go-mydumper
+
 ### Usage
 
 Please install mydumper on your OS before backup.

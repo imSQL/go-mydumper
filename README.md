@@ -51,7 +51,7 @@ Execute Restore
 	
 	func main() {
 	
-		loader, err := mydumper.NewDumper("myloader", "172.18.10.136", 3309, "root", "111111")
+		loader, err := mydumper.NewLoader("myloader", "172.18.10.136", 3309, "root", "111111")
 		if err != nil {
 			log.Println(err)
 		}

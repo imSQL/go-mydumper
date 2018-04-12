@@ -496,24 +496,24 @@ func (d *Dumper) ReadMetadata() error {
 		}
 		if strings.Index(string(buf), "Started") != -1 {
 			splitbuf := strings.Split(string(buf), ":")
-			fmt.Println("start->", splitbuf[1])
+			fmt.Println("start->", splitbuf[1:])
 		}
 		if strings.Index(string(buf), "Log") != -1 {
 			splitbuf := strings.Split(string(buf), ":")
-			fmt.Println("Log->", splitbuf[1])
+			fmt.Println("Log->", splitbuf[1:])
 		}
 		if strings.Index(string(buf), "Pos") != -1 {
 			splitbuf := strings.Split(string(buf), ":")
-			fmt.Println("Pos->", splitbuf[1])
+			fmt.Println("Pos->", splitbuf[1:])
 		}
 
 		if strings.Index(string(buf), "GTID") != -1 {
 			splitbuf := strings.Split(string(buf), ":")
-			fmt.Sprintln("gtid->", splitbuf[1])
+			fmt.Sprintln("gtid->", splitbuf[1:])
 		}
 		if strings.Index(string(buf), "Finished") != -1 {
 			splitbuf := strings.Split(string(buf), ":")
-			fmt.Sprintln("end->", splitbuf[1])
+			fmt.Sprintln("end->", splitbuf[1:])
 		}
 	}
 

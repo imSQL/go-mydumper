@@ -507,11 +507,11 @@ func (d *Dumper) ReadMetadata() error {
 		}
 		if strings.Index(string(buf.Bytes()), "Log") != -1 {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Println("Log->", splitbuf[1:])
+			fmt.Println("log->", splitbuf[1:])
 		}
 		if strings.Index(string(buf.Bytes()), "Pos") != -1 {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Println("Pos->", splitbuf[1:])
+			fmt.Println("pos->", splitbuf[1:])
 		}
 
 		if strings.Index(string(buf.Bytes()), "GTID") != -1 {

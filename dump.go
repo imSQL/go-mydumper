@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -498,32 +499,34 @@ func (d *Dumper) ReadMetadata() error {
 			break
 		}
 
-		if len(line) >2{
-			newline := bytes.TrimLeft(line,"")
-			buf.Write(bytes.Trim(newline,"\n"))
+		if len(line) > 2 {
+			newline := bytes.TrimLeft(line, "")
+			buf.Write(bytes.Trim(newline, "\n"))
 			line = []byte{}
 		}
 		if strings.Contains(string(buf.Bytes()), "Started") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Println("start->", strings.TrimLeft(strings.Join(splitbuf[1:],":")," "))
+			d.StartTimestamp, _ = time.ParseInLocation("2006-01-02 15:04:05", strings.TrimLeft(strings.Join(splitbuf[1:], ":"), " "), time.Local)
 		}
 		if strings.Contains(string(buf.Bytes()), "Log") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Println("log->", strings.TrimLeft(strings.Join(splitbuf[1:],":")," "))
+			d.LogFile = strings.TrimLeft(strings.Join(splitbuf[1:], ":"), " ")
 		}
 		if strings.Contains(string(buf.Bytes()), "Pos") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Println("pos->", strings.TrimLeft(strings.Join(splitbuf[1:],":")," "))
+			pos, _ := strconv.Atoi(strings.TrimLeft(strings.Join(splitbuf[1:], ":"), " "))
+
+			d.LogFilePos = uint64(pos)
 		}
 
 		if strings.Contains(string(buf.Bytes()), "GTID") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Println("gtid->", strings.TrimLeft(strings.Join(splitbuf[1:],":")," "))
-		} 		
+			d.LogUuid = strings.TrimLeft(strings.Join(splitbuf[1:], ":"), " ")
+		}
 		if strings.Contains(string(buf.Bytes()), "Finished") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Println("end->", strings.TrimLeft(strings.Join(splitbuf[1:],":")," "))
-		}		
+			d.EndTimestamp, _ = time.ParseInLocation("2006-01-02 15:04:05", strings.TrimLeft(strings.Join(splitbuf[1:], ":"), " "), time.Local)
+		}
 		buf.Reset()
 	}
 

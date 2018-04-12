@@ -17,16 +17,21 @@ func TestDumpAllDatabases(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = dumper.ReadMetadata()
+	meta, err := NewMeta("/backup")
 	if err != nil {
 		t.Error(err)
 	}
 
-	fmt.Println(dumper.StartTimestamp.String())
-	fmt.Println(dumper.BinLogFileName)
-	fmt.Println(dumper.BinLogFilePos)
-	fmt.Println(dumper.BinLogUuid)
-	fmt.Println(dumper.EndTimestamp.String())
+	err = meta.ReadMetadata()
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(meta.StartTimestamp.String())
+	fmt.Println(meta.BinLogFileName)
+	fmt.Println(meta.BinLogFilePos)
+	fmt.Println(meta.BinLogUuid)
+	fmt.Println(meta.EndTimestamp.String())
 
 }
 
@@ -44,16 +49,21 @@ func TestRegexDump(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = dumper.ReadMetadata()
+	meta, err := NewMeta("/backup")
 	if err != nil {
 		t.Error(err)
 	}
 
-	fmt.Println(dumper.StartTimestamp.String())
-	fmt.Println(dumper.BinLogFileName)
-	fmt.Println(dumper.BinLogFilePos)
-	fmt.Println(dumper.BinLogUuid)
-	fmt.Println(dumper.EndTimestamp.String())
+	err = meta.ReadMetadata()
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(meta.StartTimestamp.String())
+	fmt.Println(meta.BinLogFileName)
+	fmt.Println(meta.BinLogFilePos)
+	fmt.Println(meta.BinLogUuid)
+	fmt.Println(meta.EndTimestamp.String())
 }
 
 func TestDumpOneDatabase(t *testing.T) {
@@ -70,16 +80,21 @@ func TestDumpOneDatabase(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = dumper.ReadMetadata()
+	meta, err := NewMeta("/backup")
 	if err != nil {
 		t.Error(err)
 	}
 
-	fmt.Println(dumper.StartTimestamp.String())
-	fmt.Println(dumper.BinLogFileName)
-	fmt.Println(dumper.BinLogFilePos)
-	fmt.Println(dumper.BinLogUuid)
-	fmt.Println(dumper.EndTimestamp.String())
+	err = meta.ReadMetadata()
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(meta.StartTimestamp.String())
+	fmt.Println(meta.BinLogFileName)
+	fmt.Println(meta.BinLogFilePos)
+	fmt.Println(meta.BinLogUuid)
+	fmt.Println(meta.EndTimestamp.String())
 }
 
 func TestDumpSomeTables(t *testing.T) {
@@ -97,14 +112,19 @@ func TestDumpSomeTables(t *testing.T) {
 		t.Error(err)
 	}
 
-	err = dumper.ReadMetadata()
+	meta, err := NewMeta("/backup")
 	if err != nil {
 		t.Error(err)
 	}
 
-	fmt.Println(dumper.StartTimestamp.String())
-	fmt.Println(dumper.BinLogFileName)
-	fmt.Println(dumper.BinLogFilePos)
-	fmt.Println(dumper.BinLogUuid)
-	fmt.Println(dumper.EndTimestamp.String())
+	err = meta.ReadMetadata()
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(meta.StartTimestamp.String())
+	fmt.Println(meta.BinLogFileName)
+	fmt.Println(meta.BinLogFilePos)
+	fmt.Println(meta.BinLogUuid)
+	fmt.Println(meta.EndTimestamp.String())
 }

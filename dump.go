@@ -478,6 +478,9 @@ func (d *Dumper) Dump() error {
 
 // read metadata file
 func (d *Dumper) ReadMetadata() error {
+	// new buffer
+	buf := new(bytes.Buffer)
+
 	// metadata file name.
 	meta := fmt.Sprintf("%s/metadata", d.OutPutDir)
 
@@ -490,37 +493,40 @@ func (d *Dumper) ReadMetadata() error {
 
 	MetaRd := bufio.NewReader(MetaFd)
 	for {
-		buf, err := MetaRd.ReadBytes('\n')
+		line, err := MetaRd.ReadBytes('\n')
 		if err != nil {
 			break
 		}
-		fmt.Println(string(buf))
 
-		if strings.Index(string(buf), "Started") != -1 {
-			splitbuf := strings.Split(string(buf), ":")
+		buf.Write(line)
+		fmt.Println(string(buf.Bytes()))
+
+		if strings.Index(string(buf.Bytes()), "Started") != -1 {
+			splitbuf := strings.Split(string(buf.Bytes()), ":")
 			fmt.Println("start->", splitbuf[1:])
 		}
-		if strings.Index(string(buf), "Log") != -1 {
-			splitbuf := strings.Split(string(buf), ":")
+		if strings.Index(string(buf.Bytes()), "Log") != -1 {
+			splitbuf := strings.Split(string(buf.Bytes()), ":")
 			fmt.Println("Log->", splitbuf[1:])
 		}
-		if strings.Index(string(buf), "Pos") != -1 {
-			splitbuf := strings.Split(string(buf), ":")
+		if strings.Index(string(buf.Bytes()), "Pos") != -1 {
+			splitbuf := strings.Split(string(buf.Bytes()), ":")
 			fmt.Println("Pos->", splitbuf[1:])
 		}
 
-		if strings.Index(string(buf), "GTID") != -1 {
-			splitbuf := strings.Split(string(buf), ":")
+		if strings.Index(string(buf.Bytes()), "GTID") != -1 {
+			splitbuf := strings.Split(string(buf.Bytes()), ":")
 			fmt.Sprintln("gtid->", splitbuf[1:])
 		} else {
-			fmt.Println(string(buf))
+			fmt.Println(string(buf.Bytes()))
 		}
-		if strings.Index(string(buf), "Finished") != -1 {
-			splitbuf := strings.Split(string(buf), ":")
+		if strings.Index(string(buf.Bytes()), "Finished") != -1 {
+			splitbuf := strings.Split(string(buf.Bytes()), ":")
 			fmt.Sprintln("end->", splitbuf[1:])
 		} else {
-			fmt.Println(string(buf))
+			fmt.Println(string(buf.Bytes()))
 		}
+		buf.Reset()
 	}
 
 	return nil

@@ -512,10 +512,14 @@ func (d *Dumper) ReadMetadata() error {
 		if strings.Index(string(buf), "GTID") != -1 {
 			splitbuf := strings.Split(string(buf), ":")
 			fmt.Sprintln("gtid->", splitbuf[1:])
+		} else {
+			fmt.Println(string(buf))
 		}
 		if strings.Index(string(buf), "Finished") != -1 {
 			splitbuf := strings.Split(string(buf), ":")
 			fmt.Sprintln("end->", splitbuf[1:])
+		} else {
+			fmt.Println(string(buf))
 		}
 	}
 

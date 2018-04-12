@@ -29,9 +29,9 @@ type (
 		Collation string `json:"collation" db:"collation"`
 
 		StartTimestamp time.Time `json:"start_timestamp" db:"start_timestamp"`
-		LogFileName    string    `json:"log_filename" db:"log_filename"`
-		LogFilePos     uint64    `json:"log_pos" db:"log_pos"`
-		LogUuid        string    `json:"log_uuid" db:"log_uuid"`
+		BinLogFileName string    `json:"log_filename" db:"log_filename"`
+		BinLogFilePos  uint64    `json:"log_pos" db:"log_pos"`
+		BinLogUuid     string    `json:"log_uuid" db:"log_uuid"`
 		EndTimestamp   time.Time `json:"start_timestamp" db:"start_timestamp"`
 
 		// object list.
@@ -510,18 +510,18 @@ func (d *Dumper) ReadMetadata() error {
 		}
 		if strings.Contains(string(buf.Bytes()), "Log") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			d.LogFile = strings.TrimLeft(strings.Join(splitbuf[1:], ":"), " ")
+			d.BinLogFileName = strings.TrimLeft(strings.Join(splitbuf[1:], ":"), " ")
 		}
 		if strings.Contains(string(buf.Bytes()), "Pos") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
 			pos, _ := strconv.Atoi(strings.TrimLeft(strings.Join(splitbuf[1:], ":"), " "))
 
-			d.LogFilePos = uint64(pos)
+			d.BinLogFilePos = uint64(pos)
 		}
 
 		if strings.Contains(string(buf.Bytes()), "GTID") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			d.LogUuid = strings.TrimLeft(strings.Join(splitbuf[1:], ":"), " ")
+			d.BinLogUuid = strings.TrimLeft(strings.Join(splitbuf[1:], ":"), " ")
 		}
 		if strings.Contains(string(buf.Bytes()), "Finished") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")

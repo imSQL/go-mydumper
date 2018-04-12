@@ -1,6 +1,9 @@
 package mydumper
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestDumpAllDatabases(t *testing.T) {
 
@@ -13,6 +16,17 @@ func TestDumpAllDatabases(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	err = dumper.ReadMetadata()
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(dumper.StartTimestamp.String())
+	fmt.Println(dumper.BinLogFileName)
+	fmt.Println(dumper.BinLogFilePos)
+	fmt.Println(dumper.BinLogUuid)
+	fmt.Println(dumper.EndTimestamp.String())
 
 }
 
@@ -30,6 +44,16 @@ func TestRegexDump(t *testing.T) {
 		t.Error(err)
 	}
 
+	err = dumper.ReadMetadata()
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(dumper.StartTimestamp.String())
+	fmt.Println(dumper.BinLogFileName)
+	fmt.Println(dumper.BinLogFilePos)
+	fmt.Println(dumper.BinLogUuid)
+	fmt.Println(dumper.EndTimestamp.String())
 }
 
 func TestDumpOneDatabase(t *testing.T) {
@@ -45,6 +69,17 @@ func TestDumpOneDatabase(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	err = dumper.ReadMetadata()
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(dumper.StartTimestamp.String())
+	fmt.Println(dumper.BinLogFileName)
+	fmt.Println(dumper.BinLogFilePos)
+	fmt.Println(dumper.BinLogUuid)
+	fmt.Println(dumper.EndTimestamp.String())
 }
 
 func TestDumpSomeTables(t *testing.T) {
@@ -62,4 +97,14 @@ func TestDumpSomeTables(t *testing.T) {
 		t.Error(err)
 	}
 
+	err = dumper.ReadMetadata()
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Println(dumper.StartTimestamp.String())
+	fmt.Println(dumper.BinLogFileName)
+	fmt.Println(dumper.BinLogFilePos)
+	fmt.Println(dumper.BinLogUuid)
+	fmt.Println(dumper.EndTimestamp.String())
 }

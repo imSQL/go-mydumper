@@ -1,10 +1,9 @@
 package mydumper
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
-	"os"
+	"io/ioutil"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -485,15 +484,8 @@ func (d *Dumper) ReadMetadata() error {
 	meta := fmt.Sprintf("%s/metadata", d.OutPutDir)
 
 	// open a file.
-	MetaFd, err := os.Open(meta)
-	if err != nil {
-		return errors.Trace(err)
-	}
-	defer MetaFd.Close()
-
-	MetaRd := bufio.NewReader(MetaFd)
 	for {
-		line, err := MetaRd.ReadBytes('\n')
+		line, err := ioutil.ReadFile(meta)
 		if err != nil {
 			break
 		}

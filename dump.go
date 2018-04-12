@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/juju/errors"
 )
@@ -23,6 +24,12 @@ type (
 		// character default utf8,collation default is utf8_general_ci.
 		Charset   string `json:"character" db:"character"`
 		Collation string `json:"collation" db:"collation"`
+
+		StartTimestamp time.Time `json:"start_timestamp" db:"start_timestamp"`
+		LogFileName    string    `json:"log_filename" db:"log_filename"`
+		LogFilePos     uint64    `json:"log_pos" db:"log_pos"`
+		LogUuid        string    `json:"log_uuid" db:"log_uuid"`
+		EndTimestamp   time.Time `json:"start_timestamp" db:"start_timestamp"`
 
 		// object list.
 		Databases []string `json:"databases" db:"databases"`
@@ -464,5 +471,10 @@ func (d *Dumper) Dump() error {
 	if err != nil {
 		return errors.Trace(err)
 	}
+	return nil
+}
+
+// read metadata file
+func (d *Dumper) ReadMetadata() error {
 	return nil
 }

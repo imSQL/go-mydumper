@@ -494,6 +494,8 @@ func (d *Dumper) ReadMetadata() error {
 		if err != nil {
 			break
 		}
+		fmt.Println(string(buf))
+
 		if strings.Index(string(buf), "Started") != -1 {
 			splitbuf := strings.Split(string(buf), ":")
 			fmt.Println("start->", splitbuf[1:])

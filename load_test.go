@@ -9,6 +9,7 @@ func TestLoad(t *testing.T) {
 		t.Error(err)
 	}
 
+	loader.SetSourceDirectory("/backup")
 	loader.SetRestoreDatabase("test")
 
 	err = loader.Load()

@@ -12,6 +12,8 @@ func TestDumpAllDatabases(t *testing.T) {
 		t.Error(err)
 	}
 
+	dumper.SetOutPutDir("/backup")
+
 	err = dumper.Dump()
 	if err != nil {
 		t.Error(err)
@@ -42,6 +44,7 @@ func TestRegexDump(t *testing.T) {
 		t.Error(err)
 	}
 
+	dumper.SetOutPutDir("/backup")
 	dumper.SetRegex("^(?!(mysql|test))")
 
 	err = dumper.Dump()
@@ -73,6 +76,7 @@ func TestDumpOneDatabase(t *testing.T) {
 		t.Error(err)
 	}
 
+	dumper.SetOutPutDir("/backup")
 	dumper.AddDatabase("dev")
 
 	err = dumper.Dump()
@@ -104,6 +108,7 @@ func TestDumpSomeTables(t *testing.T) {
 		t.Error(err)
 	}
 
+	dumper.SetOutPutDir("/backup")
 	dumper.AddDatabase("dev")
 	dumper.AddTables("t1", "t2", "t3")
 

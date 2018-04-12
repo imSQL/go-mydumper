@@ -494,7 +494,7 @@ func (d *Dumper) ReadMetadata() error {
 		if err != nil {
 			break
 		}
-		fmt.Sprintf("%s", string(buf))
+		fmt.Println(string(buf))
 	}
 
 	return nil

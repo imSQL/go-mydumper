@@ -498,34 +498,32 @@ func (d *Dumper) ReadMetadata() error {
 			break
 		}
 
-		buf.Write(line)
-		fmt.Println(string(buf.Bytes()))
+		if len(line) >2{
+			newline := bytes.TrimLeft(line,"")
+			buf.Write(bytes.Trim(newline,"\n"))
+			line = []byte{}
+		}
+		if strings.Contains(string(buf.Bytes()), "Started") == true {
+			splitbuf := strings.Split(string(buf.Bytes()), ":")
+			fmt.Println("start->", strings.TrimLeft(strings.Join(splitbuf[1:],":")," "))
+		}
+		if strings.Contains(string(buf.Bytes()), "Log") == true {
+			splitbuf := strings.Split(string(buf.Bytes()), ":")
+			fmt.Println("log->", strings.TrimLeft(strings.Join(splitbuf[1:],":")," "))
+		}
+		if strings.Contains(string(buf.Bytes()), "Pos") == true {
+			splitbuf := strings.Split(string(buf.Bytes()), ":")
+			fmt.Println("pos->", strings.TrimLeft(strings.Join(splitbuf[1:],":")," "))
+		}
 
-		if strings.Index(string(buf.Bytes()), "Started") != -1 {
+		if strings.Contains(string(buf.Bytes()), "GTID") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Println("start->", splitbuf[1:])
-		}
-		if strings.Index(string(buf.Bytes()), "Log") != -1 {
+			fmt.Println("gtid->", strings.TrimLeft(strings.Join(splitbuf[1:],":")," "))
+		} 		
+		if strings.Contains(string(buf.Bytes()), "Finished") == true {
 			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Println("log->", splitbuf[1:])
-		}
-		if strings.Index(string(buf.Bytes()), "Pos") != -1 {
-			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Println("pos->", splitbuf[1:])
-		}
-
-		if strings.Index(string(buf.Bytes()), "GTID") != -1 {
-			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Sprintln("gtid->", splitbuf[1:])
-		} else {
-			fmt.Println(string(buf.Bytes()))
-		}
-		if strings.Index(string(buf.Bytes()), "Finished") != -1 {
-			splitbuf := strings.Split(string(buf.Bytes()), ":")
-			fmt.Sprintln("end->", splitbuf[1:])
-		} else {
-			fmt.Println(string(buf.Bytes()))
-		}
+			fmt.Println("end->", strings.TrimLeft(strings.Join(splitbuf[1:],":")," "))
+		}		
 		buf.Reset()
 	}
 
